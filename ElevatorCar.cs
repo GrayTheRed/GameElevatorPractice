@@ -11,11 +11,14 @@ public class ElevatorCar : MonoBehaviour
     public bool IsMoving;
     public MoveDirection moveDirection;
     Vector3 currentPosition;
+    Vector3 nextPosition;
 
     // Start is called before the first frame update
     void Start()
     {
         currentPosition = CarObj.transform.position;
+        nextPosition = CarObj.transform.position;
+        nextPosition.y += 2.0f;
     }
 
     // Update is called once per frame
@@ -23,69 +26,26 @@ public class ElevatorCar : MonoBehaviour
     {
         if (IsMoving)
         {
-            Move();
+            Move(nextPosition);
         }
     }
 
-    private void Move()
-    {
-        currentPosition = CarObj.transform.position;
-        float spd = MoveSpeed;
-        if (moveDirection == MoveDirection.Down)
-        {
-            Debug.Log("Should be going down now");
-            spd = -Mathf.Abs(spd);
-        }
 
-        if ((moveDirection == MoveDirection.Down && currentPosition.y > MoveTo) || (moveDirection == MoveDirection.Up && currentPosition.y <= MoveTo))
-        {
-            currentPosition.y += spd;
-            CarObj.transform.position = currentPosition;
-        }
-        else
-        {
-            IsMoving = false;
-            moveDirection = MoveDirection.None;
-        }
+    public void Move(Vector3 loc)
+    {
+        CarObj.transform.position = Vector3.MoveTowards(CarObj.transform.position, loc, MoveSpeed * Time.deltaTime);
     }
 
-    public void SendCar(float floor)
+   public void SendCar(Vector3 loc)
     {
-        Debug.Log("Sending the car");
-
-        MoveTo = floor;
-
-        if(floor < currentPosition.y)
-        {
-            Debug.Log("sending down");
-            moveDirection = MoveDirection.Down;
-        }
-        else if (floor > currentPosition.y)
-        {
-            Debug.Log("Sending up");
-            moveDirection = MoveDirection.Up;
-        }
-        else
-        {
-            moveDirection = MoveDirection.None;
-        }
-
+        nextPosition = loc;
         IsMoving = true;
     }
 
-    void ChangeDirection()
+    public void Stop()
     {
-        switch (moveDirection)
-        {
-            case MoveDirection.Up:
-                moveDirection = MoveDirection.Down;
-                break;
-            case MoveDirection.Down:
-                moveDirection = MoveDirection.Up;
-                break;
-            default:
-                break;
-        }
+        IsMoving = false;
+        moveDirection = MoveDirection.None;
     }
 
     public enum MoveDirection
