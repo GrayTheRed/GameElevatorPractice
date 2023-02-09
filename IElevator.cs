@@ -5,5 +5,6 @@ using UnityEngine;
 public interface IElevator 
 {
     ElevatorCar ElevatorCar { get; set; }
-    ElevatorFloor ElevatorFloor { get; set; }
+    List<ElevatorFloor> ElevatorFloors { get; set; }
+    ElevatorQueue Queue { get; set; }
 }
