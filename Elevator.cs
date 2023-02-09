@@ -5,10 +5,6 @@ using UnityEngine;
 
 public class Elevator : MonoBehaviour, IElevator
 {
-    //private ElevatorQueue queue;
-    //public ElevatorCar elevatorCar;
-    //public List<ElevatorFloor> elevatorFloors;
-
     public ElevatorCar ElevatorCar { get; set; }
     public ElevatorQueue Queue { get; set; }
     public List<ElevatorFloor> ElevatorFloors { get; set; }
