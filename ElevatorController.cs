@@ -5,25 +5,30 @@ using UnityEngine;
 public class ElevatorController : MonoBehaviour
 {
     public ElevatorCar car;
+    public Vector3 floor;
     public float timer;
     float tempTimer;
     // Start is called before the first frame update
     void Start()
     {
-        car.SendCar(3.0f);
+        floor = car.transform.position;
         tempTimer = timer;
     }
 
     // Update is called once per frame
     void Update()
-    {
-        tempTimer -= 0.001f;
-        Debug.Log(tempTimer);
-        if(tempTimer <= 0.0f)
+    { 
+        tempTimer -= .001f;
+        if(tempTimer <= 0)
         {
-            Debug.Log("timer hit");
-            car.SendCar(1.0f);
             tempTimer = timer;
+            Debug.Log("sending car down now");
+            car.SendCar(floor);
         }
+    }
+
+    public void GetCar()
+    {
+        car.Move(floor);
     }
 }

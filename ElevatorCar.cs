@@ -5,82 +5,61 @@ using UnityEngine;
 public class ElevatorCar : MonoBehaviour
 {
     public GameObject CarObj;
-    public float MaxHeight;
     public float MoveTo;
     public float MoveSpeed;
     public bool IsMoving;
     public MoveDirection moveDirection;
+    public int CurrentFloor;
     Vector3 currentPosition;
+    Vector3 nextPosition;
 
     // Start is called before the first frame update
     void Start()
     {
         currentPosition = CarObj.transform.position;
+        nextPosition = currentPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (IsMoving)
+        if(IsMoving)
         {
-            Move();
+            Move(nextPosition);
         }
     }
 
-    private void Move()
+
+    public void Move(Vector3 loc)
     {
-        currentPosition = CarObj.transform.position;
-        float spd = MoveSpeed;
-        if (moveDirection == MoveDirection.Down)
-        {
-            Debug.Log("Should be going down now");
-            spd = -Mathf.Abs(spd);
-        }
-
-        if ((moveDirection == MoveDirection.Down && currentPosition.y > MoveTo) || (moveDirection == MoveDirection.Up && currentPosition.y <= MoveTo))
-        {
-            currentPosition.y += spd;
-            CarObj.transform.position = currentPosition;
-        }
-        else
-        {
-            IsMoving = false;
-            moveDirection = MoveDirection.None;
-        }
+        Debug.Log("Move called in ElevatorCar");
+        CarObj.transform.position = Vector3.MoveTowards(CarObj.transform.position, loc, MoveSpeed * Time.deltaTime);
     }
 
-    public void SendCar(float floor)
+    public void SendCar(Vector3 loc)
     {
-        Debug.Log("Sending the car");
-
-        MoveTo = floor;
-
-        if(floor < currentPosition.y)
+        if(loc != currentPosition)
         {
-            Debug.Log("sending down");
-            moveDirection = MoveDirection.Down;
+            Debug.Log("SendCar location not current position");
+            nextPosition = loc;
+            IsMoving = true;
         }
-        else if (floor > currentPosition.y)
-        {
-            Debug.Log("Sending up");
-            moveDirection = MoveDirection.Up;
-        }
-        else
-        {
-            moveDirection = MoveDirection.None;
-        }
-
-        IsMoving = true;
     }
 
-    void ChangeDirection()
+    public void Stop()
+    {
+        IsMoving = false;
+        moveDirection = MoveDirection.None;
+    }
+
+    public void ChangeDirection()
     {
         switch (moveDirection)
         {
-            case MoveDirection.Up:
+            case ElevatorCar.MoveDirection.Up:
                 moveDirection = MoveDirection.Down;
                 break;
-            case MoveDirection.Down:
+            case ElevatorCar.MoveDirection.Down:
                 moveDirection = MoveDirection.Up;
                 break;
             default:
