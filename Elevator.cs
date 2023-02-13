@@ -4,27 +4,12 @@ using System.Linq;
 using UnityEngine;
 
 public class Elevator : MonoBehaviour
-    //, IElevator
 {
     public ElevatorCar ElevatorCar;
     public ElevatorQueue Queue;
     public List<ElevatorFloor> ElevatorFloors;    
     public bool IsTesting = false;
     ElevatorTests Tests;
-
-    //public ElevatorCar ElevatorCar
-    //{
-    //    get { return elevatorCar; }
-    //    set { elevatorCar = value; }
-    //}
-    //public ElevatorQueue Queue {
-    //    get { return queue; }
-    //    set { queue = value; }
-    //}
-    //public List<ElevatorFloor> ElevatorFloors {
-    //    get { return elevatorFloors; }
-    //    set { elevatorFloors = value; }
-    //}
 
     // Start is called before the first frame update
     void Start()
