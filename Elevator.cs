@@ -3,30 +3,57 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Elevator : MonoBehaviour, IElevator
+public class Elevator : MonoBehaviour
+    //, IElevator
 {
-    public ElevatorCar ElevatorCar { get; set; }
-    public ElevatorQueue Queue { get; set; }
-    public List<ElevatorFloor> ElevatorFloors { get; set; }
+    public ElevatorCar ElevatorCar;
+    public ElevatorQueue Queue;
+    public List<ElevatorFloor> ElevatorFloors;    
+    public bool IsTesting = false;
+    ElevatorTests Tests;
+
+    //public ElevatorCar ElevatorCar
+    //{
+    //    get { return elevatorCar; }
+    //    set { elevatorCar = value; }
+    //}
+    //public ElevatorQueue Queue {
+    //    get { return queue; }
+    //    set { queue = value; }
+    //}
+    //public List<ElevatorFloor> ElevatorFloors {
+    //    get { return elevatorFloors; }
+    //    set { elevatorFloors = value; }
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Queue.SetFloorQueue(ElevatorFloors);
+        SetCar();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (IsTesting)
+        {
+            Tests = GetComponent<ElevatorTests>();
+            Tests.CallCarToTestFloor();
+            IsTesting = false;
+        }
+
         if (!(ElevatorCar.IsMoving))
         {
             Vector3 next = GetNextLocation();
 
-            if( next != ElevatorCar.transform.position)
+            if (next != ElevatorCar.transform.position)
             {
                 ElevatorCar.SendCar(next);
             }
         }
+        
+        
     }
 
     public Vector3 GetNextLocation()
@@ -46,5 +73,11 @@ public class Elevator : MonoBehaviour, IElevator
         }
 
         return nextLocation;
+    }
+
+    private void SetCar()
+    {
+        Vector3 startPosition = Queue.FloorQueue[ElevatorCar.CurrentFloor].transform.position;
+        ElevatorCar.transform.position = startPosition;
     }
 }

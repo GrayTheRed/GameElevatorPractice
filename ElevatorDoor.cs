@@ -48,8 +48,8 @@ public class ElevatorDoor : MonoBehaviour
 
         currentState = DoorState.Opening;
 
+        // adding temporary timer to simulate waiting on an animation
         tempCloseTimer -= Time.deltaTime;
-
         if (tempCloseTimer <= 0)
         {
             tempCloseTimer = autoCloseTimer;
@@ -61,6 +61,8 @@ public class ElevatorDoor : MonoBehaviour
     {
         Debug.Log("Closing the door");
         currentState = DoorState.Closing;
+
+        // adding temporary timer to simulate waiting on an animation
         tempCloseTimer -= Time.deltaTime;
         if (tempCloseTimer <= 0)
         {

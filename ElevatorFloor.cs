@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ElevatorFloor : MonoBehaviour
 {
+    public Elevator Elevator;
     public int FloorNumber;
     public bool WaitingForElevator = false;
     ElevatorFloorControls controller;
@@ -11,12 +12,18 @@ public class ElevatorFloor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        controller = GetComponent<ElevatorFloorControls>();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void CallCar()
+    {
+        Debug.Log("Call Car called on Elevator Floor");
+        controller.AddToQueue(FloorNumber, Elevator);
     }
 }
