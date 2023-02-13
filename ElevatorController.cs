@@ -18,13 +18,7 @@ public class ElevatorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     { 
-        tempTimer -= .001f;
-        if(tempTimer <= 0)
-        {
-            tempTimer = timer;
-            Debug.Log("sending car down now");
-            car.SendCar(floor);
-        }
+        
     }
 
     public void GetCar()

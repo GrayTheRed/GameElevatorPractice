@@ -5,7 +5,6 @@ using UnityEngine;
 public class ElevatorCar : MonoBehaviour
 {
     public GameObject CarObj;
-    public float MoveTo;
     public float MoveSpeed;
     public bool IsMoving;
     public MoveDirection moveDirection;
@@ -32,7 +31,7 @@ public class ElevatorCar : MonoBehaviour
 
     public void Move(Vector3 loc)
     {
-        Debug.Log("Move called in ElevatorCar");
+        //Debug.Log("Move called in ElevatorCar");
         CarObj.transform.position = Vector3.MoveTowards(CarObj.transform.position, loc, MoveSpeed * Time.deltaTime);
     }
 
@@ -63,6 +62,7 @@ public class ElevatorCar : MonoBehaviour
                 moveDirection = MoveDirection.Up;
                 break;
             default:
+                moveDirection = MoveDirection.Down;
                 break;
         }
     }

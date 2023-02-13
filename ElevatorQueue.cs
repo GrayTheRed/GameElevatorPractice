@@ -9,7 +9,7 @@ public class ElevatorQueue : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        FloorQueue = new Dictionary<int, ElevatorFloor>();
     }
 
     // Update is called once per frame
@@ -24,6 +24,7 @@ public class ElevatorQueue : MonoBehaviour
         int nextFloor = currentFloor;
         int temp = currentFloor;
         bool keepLooping = true;
+        bool firstLoop = true;
         while (keepLooping)
         {
             switch (direction)
@@ -35,14 +36,31 @@ public class ElevatorQueue : MonoBehaviour
                     temp -= 1;
                     break;
                 default:
-                    keepLooping = false;
+                    if (firstLoop)
+                    {
+                        Debug.Log("GetNextFloor checking up");
+                        temp += 1;
+                    }
+                    else
+                    {
+                        Debug.Log("GetNextFloor checking down");
+                        temp -= 1;
+                    }
                     break;
             }
 
-            if (FloorQueue[nextFloor].WaitingForElevator)
+            try
             {
-                nextFloor = temp;
-                keepLooping = false;
+                if (FloorQueue[temp].WaitingForElevator)
+                {
+                    nextFloor = temp;
+                    keepLooping = false;
+                    break;
+                }
+            }
+            catch
+            {
+                Debug.Log("No floors for this");
             }
 
             keepLooping = 0 < temp && temp <= FloorQueue.Count;
@@ -53,6 +71,7 @@ public class ElevatorQueue : MonoBehaviour
 
     public void AddFloorToQueue(int floor)
     {
+        Debug.Log("AddFloorToQueue in elevator queue hit");
         FloorQueue[floor].WaitingForElevator = true;
     }
 
@@ -60,6 +79,8 @@ public class ElevatorQueue : MonoBehaviour
     {
         foreach (ElevatorFloor f in floors)
         {
+            string debugMessage = "Creating queue item for floor " + f.FloorNumber.ToString();
+            Debug.Log(debugMessage);
             FloorQueue.Add(f.FloorNumber, f);
         }
     }
