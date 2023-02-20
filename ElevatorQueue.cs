@@ -6,10 +6,11 @@ public class ElevatorQueue : MonoBehaviour
 {
     public Dictionary<int, ElevatorFloor> FloorQueue;
     public ElevatorCar ElevatorCar;
+
     // Start is called before the first frame update
     void Start()
     {
-        FloorQueue = new Dictionary<int, ElevatorFloor>();
+        
     }
 
     // Update is called once per frame

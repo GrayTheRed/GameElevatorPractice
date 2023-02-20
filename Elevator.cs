@@ -11,15 +11,25 @@ public class Elevator : MonoBehaviour
     public bool IsTesting = false;
     ElevatorTests Tests;
 
+    private void Awake()
+    {
+        Queue.FloorQueue = new Dictionary<int, ElevatorFloor>();
+        Queue.SetFloorQueue(ElevatorFloors);
+    }
     // Start is called before the first frame update
     void Start()
     {
-        Queue.SetFloorQueue(ElevatorFloors);
+        //Queue.SetFloorQueue(ElevatorFloors);
         SetCar();
     }
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+
+    private void LateUpdate()
     {
         if (IsTesting)
         {
@@ -37,8 +47,6 @@ public class Elevator : MonoBehaviour
                 ElevatorCar.SendCar(next);
             }
         }
-        
-        
     }
 
     public Vector3 GetNextLocation()

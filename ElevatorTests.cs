@@ -26,7 +26,10 @@ public class ElevatorTests : MonoBehaviour
         try
         {
             Debug.Log("Testing Call Car");
-            elevator.Queue.FloorQueue[testFloor].CallCar();
+            elevator.Queue.AddFloorToQueue(1);
+            elevator.Queue.AddFloorToQueue(2);
+            elevator.Queue.AddFloorToQueue(3);
+
         }
         catch
         {
