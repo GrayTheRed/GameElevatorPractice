@@ -5,9 +5,8 @@ using UnityEngine;
 public class ElevatorCar : MonoBehaviour
 {
     public GameObject CarObj;
+    public ElevatorDoor ElevatorDoor;
     public float MoveSpeed;
-    public bool IsMoving;
-    public MoveDirection moveDirection;
     public int CurrentFloor;
     Vector3 currentPosition;
     Vector3 nextPosition;
@@ -25,16 +24,4 @@ public class ElevatorCar : MonoBehaviour
         
     }
 
-
-    public void SendCar(Vector3 loc)
-    {
-       
-    }
-
-    public enum MoveDirection
-    {
-        Up,
-        Down,
-        None
-    }
 }

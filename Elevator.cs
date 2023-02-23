@@ -8,9 +8,12 @@ public class Elevator : MonoBehaviour
     public ElevatorCar ElevatorCar;
     public ElevatorQueue Queue;
     public List<ElevatorFloor> ElevatorFloors;    
-    public bool IsTesting = false;
+    public bool IsTesting = false;    
+    public CarMoveDirection MoveDirection;
+    public float CarWaitTimeSeconds = 3;
+    private float tempWaitTimer;
     ElevatorTests Tests;
-    private int CarWaitTimeSeconds = 3;
+    private bool WaitForStop;
 
     private void Awake()
     {
@@ -22,6 +25,7 @@ public class Elevator : MonoBehaviour
     {
         //Queue.SetFloorQueue(ElevatorFloors);
         SetCar();
+        tempWaitTimer = CarWaitTimeSeconds;
     }
 
     // Update is called once per frame
@@ -39,16 +43,15 @@ public class Elevator : MonoBehaviour
             IsTesting = false;
         }
 
-        if (ElevatorCar.IsMoving)
+        if (WaitForStop)
         {
-           
+            CarWait();
         }
         else
         {
-            int next = GetNextFloor();
-
-            if (next != ElevatorCar.CurrentFloor)
-            {
+            if(!(Queue.IsQueueEmpty))
+            {                
+                int next = GetNextFloor();
                 MoveCar(next);
             }
         }
@@ -56,20 +59,16 @@ public class Elevator : MonoBehaviour
 
     private int GetNextFloor()
     {
+        Debug.Log("Getting next floor");
         Vector3 nextLocation = ElevatorCar.transform.position;
-        ElevatorCar.MoveDirection direction = ElevatorCar.moveDirection;
-        int nextFloor = Queue.GetNextFloor(direction);
+        int nextFloor = Queue.GetNextFloor(MoveDirection);
 
-        if(nextFloor == ElevatorCar.CurrentFloor)
-        {
-            
-        }
-        else
+        if(!(nextFloor == ElevatorCar.CurrentFloor))
         {
             ElevatorFloor floor = ElevatorFloors.Where(f => f.FloorNumber == nextFloor).First();
-            nextFloor =  floor.FloorNumber;
+            nextFloor = floor.FloorNumber;
         }
-
+        Debug.Log($"Next floor should be {nextFloor}");
         return nextFloor;
     }
 
@@ -79,32 +78,36 @@ public class Elevator : MonoBehaviour
         ElevatorCar.transform.position = startPosition;
     }
 
-    private void MoveCar(Vector3 location)
-    {
-        ElevatorCar.transform.position = Vector3.MoveTowards(ElevatorCar.transform.position, location, ElevatorCar.MoveSpeed * Time.deltaTime);
-    }
-
     private void MoveCar(int floorNumber)
     {
-        ElevatorFloor floor = ElevatorFloors.Where(f => f.FloorNumber == floorNumber).First();
-        Vector3 nextLocation = floor.transform.position;
+
+        Vector3 nextLocation = GetFloorPosition(floorNumber);
         ElevatorCar.transform.position = Vector3.MoveTowards(ElevatorCar.transform.position, nextLocation, ElevatorCar.MoveSpeed * Time.deltaTime);
 
         if(ElevatorCar.transform.position == nextLocation)
         {
             ElevatorCar.CurrentFloor = floorNumber;
-            StartCoroutine(Wait());
+            WaitForStop = true;
+            ElevatorCar.ElevatorDoor.Open();
         }
     }
 
-    IEnumerator Wait()
+    private Vector3 GetFloorPosition(int floorNumber)
     {
-        yield return new WaitForSeconds(CarWaitTimeSeconds);
+        ElevatorFloor floor = ElevatorFloors.Where(f => f.FloorNumber == floorNumber).First();
+        Vector3 floorPosition = floor.transform.position;
+        return floorPosition;
     }
 
     private void CarWait()
     {
+        tempWaitTimer -= Time.deltaTime;
         
+        if(tempWaitTimer <= 0f)
+        {
+            tempWaitTimer = CarWaitTimeSeconds;
+            WaitForStop = false;
+        }
     }
 
     public void AddFloorToQueue(int floorNumber)
@@ -112,7 +115,7 @@ public class Elevator : MonoBehaviour
         Queue.AddFloorToQueue(floorNumber);
     }
 
-    private enum CarMoveDirection
+    public enum CarMoveDirection
     {
         Up,
         Down,

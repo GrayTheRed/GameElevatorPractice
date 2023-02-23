@@ -6,6 +6,7 @@ public class ElevatorQueue : MonoBehaviour
 {
     public Dictionary<int, ElevatorFloor> FloorQueue;
     public ElevatorCar ElevatorCar;
+    public bool IsQueueEmpty = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +20,7 @@ public class ElevatorQueue : MonoBehaviour
 
     }
 
-    public int GetNextFloor(ElevatorCar.MoveDirection direction)
+    public int GetNextFloor(Elevator.CarMoveDirection direction)
     {
         int currentFloor = ElevatorCar.CurrentFloor;
         int nextFloor = currentFloor;
@@ -30,10 +31,10 @@ public class ElevatorQueue : MonoBehaviour
         {
             switch (direction)
             {
-                case ElevatorCar.MoveDirection.Up:
+                case Elevator.CarMoveDirection.Up:
                     temp += 1;
                     break;
-                case ElevatorCar.MoveDirection.Down:
+                case Elevator.CarMoveDirection.Down:
                     temp -= 1;
                     break;
                 default:
@@ -50,23 +51,15 @@ public class ElevatorQueue : MonoBehaviour
                     break;
             }
 
-            try
+            if (FloorQueue[temp].WaitingForElevator)
             {
-                if (FloorQueue[temp].WaitingForElevator)
-                {
-                    nextFloor = temp;
-                    keepLooping = false;
-                    break;
-                }
-            }
-            catch
-            {
-                Debug.Log("No floors for this");
+                nextFloor = temp;
+                return nextFloor;
             }
 
-            keepLooping = 0 < temp && temp <= FloorQueue.Count;
+            keepLooping = 0 < temp && temp < FloorQueue.Count;
         }
-
+        IsQueueEmpty = nextFloor == currentFloor;
         return nextFloor;
     }
 
@@ -74,16 +67,15 @@ public class ElevatorQueue : MonoBehaviour
     {
         Debug.Log("AddFloorToQueue in elevator queue hit");
         FloorQueue[floor].WaitingForElevator = true;
+        IsQueueEmpty = false;
     }
 
     public void SetFloorQueue(List<ElevatorFloor> floors)
     {
         foreach (ElevatorFloor f in floors)
         {
-            string debugMessage = "Creating queue item for floor " + f.FloorNumber.ToString();
-            Debug.Log(debugMessage);
+            Debug.Log($"Creating queue item for floor {f.FloorNumber}");
             FloorQueue.Add(f.FloorNumber, f);
         }
     }
-
 }
