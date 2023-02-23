@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElevatorCarControls : MonoBehaviour
+public class ElevatorCarController : MonoBehaviour
 {
-    Dictionary<int, Vector3> floorList;
-    ElevatorCar car;
-    ElevatorDoor door;
+    public ElevatorCar Car;
+    public Elevator Elevator;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,8 +18,8 @@ public class ElevatorCarControls : MonoBehaviour
         
     }
 
-    public void SendCar(int floor)
+    public void SendToFloor(int floorNumber)
     {
-        car.SendCar(floorList[floor]);
+        Elevator.AddFloorToQueue(floorNumber);
     }
 }

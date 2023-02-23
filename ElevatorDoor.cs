@@ -18,28 +18,33 @@ public class ElevatorDoor : MonoBehaviour
     {
         switch (currentState)
         {
-            case DoorState.Opening:
-                Open();
-                break;
-            case DoorState.Closing:
-                Close();
-                break;
-            case DoorState.Opened:
+            case (DoorState.Opening):
                 tempCloseTimer -= Time.deltaTime;
-                if(tempCloseTimer <= 0)
+                if (tempCloseTimer <= 0)
+                {
+                    currentState = DoorState.Opened;
+                }
+                break;
+            case (DoorState.Opened):
+                tempCloseTimer -= Time.deltaTime;
+                if (tempCloseTimer <= 0)
                 {
                     tempCloseTimer = autoCloseTimer;
                     Close();
                 }
                 break;
-            case DoorState.Closed:
-                // do nothing
+            case (DoorState.Closing):
+                tempCloseTimer -= Time.deltaTime;
+                if (tempCloseTimer <= 0)
+                {
+                    tempCloseTimer = autoCloseTimer;
+                    currentState = DoorState.Closed;
+                }
                 break;
+            
             default:
-                Close();
                 break;
-        }
-        
+        } 
     }
 
     public void Open()
@@ -47,28 +52,12 @@ public class ElevatorDoor : MonoBehaviour
         Debug.Log("Opening the door");
 
         currentState = DoorState.Opening;
-
-        // adding temporary timer to simulate waiting on an animation
-        tempCloseTimer -= Time.deltaTime;
-        if (tempCloseTimer <= 0)
-        {
-            tempCloseTimer = autoCloseTimer;
-            currentState = DoorState.Opened;
-        }
     }
 
     public void Close()
     {
         Debug.Log("Closing the door");
         currentState = DoorState.Closing;
-
-        // adding temporary timer to simulate waiting on an animation
-        tempCloseTimer -= Time.deltaTime;
-        if (tempCloseTimer <= 0)
-        {
-            tempCloseTimer = autoCloseTimer;
-            currentState = DoorState.Closed;
-        }
     }
 
     public enum DoorState

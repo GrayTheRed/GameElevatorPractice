@@ -5,6 +5,7 @@ using UnityEngine;
 public class ElevatorFloorControls : MonoBehaviour
 {
     public ElevatorFloor Floor;
+    public Elevator Elevator;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,8 +18,8 @@ public class ElevatorFloorControls : MonoBehaviour
         
     }
 
-    public void AddToQueue(int floor, Elevator elevator)
+    public void AddToQueue(int floorNumber)
     {
-        elevator.Queue.AddFloorToQueue(floor);
+        Elevator.AddFloorToQueue(floorNumber);
     }
 }

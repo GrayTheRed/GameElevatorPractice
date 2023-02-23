@@ -24,6 +24,12 @@ public class ElevatorFloor : MonoBehaviour
     public void CallCar()
     {
         Debug.Log("Call Car called on Elevator Floor");
-        controller.AddToQueue(FloorNumber, Elevator);
+        controller.AddToQueue(FloorNumber);
+    }
+
+    public void Arrive()
+    {
+        Debug.Log($"Car has arrived to floor {FloorNumber}");
+
     }
 }
