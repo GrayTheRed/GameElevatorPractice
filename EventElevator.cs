@@ -25,7 +25,7 @@ public class EventElevator : MonoBehaviour
         // These are for testing and will be removed later
         Floors[0].ActivateFloor();
         Floors[2].ActivateFloor();
-        
+
     }
 
     // Update is called once per frame
@@ -129,9 +129,6 @@ public class EventElevator : MonoBehaviour
 
     public void AddToQueue(int floor)
     {
-        //set floor to active
-        // if car is not moving, set to moving
-
         Debug.Log($"Adding floor {floor} to queue");
         FloorWaitStatus[floor] = true;
 
@@ -161,9 +158,6 @@ public class EventElevator : MonoBehaviour
 
     public void RemoveFromQueue (int floor)
     {
-        // set floor to inactive
-        // check for any more active floors
-        // if none, set is car moving to false
         Debug.Log($"Removing floor {floor} from queue");
         FloorWaitStatus[floor] = false;
         IsQueueEmpty = !(FloorsWaiting());
