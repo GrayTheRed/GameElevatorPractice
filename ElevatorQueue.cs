@@ -20,13 +20,25 @@ public class ElevatorQueue : MonoBehaviour
 
     }
 
-    public int GetNextFloor(Elevator.CarMoveDirection direction)
+    public int GetNextFloor(ref Elevator.CarMoveDirection direction)
     {
-        int currentFloor = ElevatorCar.CurrentFloor;
-        int nextFloor = currentFloor;
-        int temp = currentFloor;
+        int nextFloor = FindWaitingFloor(direction); 
+        
+        if(nextFloor == ElevatorCar.CurrentFloor)
+        {
+            direction = Reverse(direction);
+            nextFloor = FindWaitingFloor(direction);
+        }
+        
+        IsQueueEmpty = nextFloor == ElevatorCar.CurrentFloor;
+        return nextFloor;
+    }
+
+    private int FindWaitingFloor(Elevator.CarMoveDirection direction)
+    {
+        int nextFloor = ElevatorCar.CurrentFloor;
+        int temp = ElevatorCar.CurrentFloor;
         bool keepLooping = true;
-        bool firstLoop = true;
         while (keepLooping)
         {
             switch (direction)
@@ -35,20 +47,13 @@ public class ElevatorQueue : MonoBehaviour
                     temp += 1;
                     break;
                 case Elevator.CarMoveDirection.Down:
-                    temp -= 1;
-                    break;
-                default:
-                    if (firstLoop)
+                    if (temp > 1)
                     {
-                        Debug.Log("GetNextFloor checking up");
-                        temp += 1;
-                    }
-                    else
-                    {
-                        Debug.Log("GetNextFloor checking down");
                         temp -= 1;
                     }
                     break;
+                default:
+                    return nextFloor;
             }
 
             if (FloorQueue[temp].WaitingForElevator)
@@ -59,7 +64,6 @@ public class ElevatorQueue : MonoBehaviour
 
             keepLooping = 0 < temp && temp < FloorQueue.Count;
         }
-        IsQueueEmpty = nextFloor == currentFloor;
         return nextFloor;
     }
 
@@ -70,12 +74,31 @@ public class ElevatorQueue : MonoBehaviour
         IsQueueEmpty = false;
     }
 
+    public void RemoveFloorFromQueue(int floor)
+    {
+        Debug.Log($"Removing floor {floor} from queue");
+        //FloorQueue[floor].WaitingForElevator = false;
+    }
+
     public void SetFloorQueue(List<ElevatorFloor> floors)
     {
         foreach (ElevatorFloor f in floors)
         {
             Debug.Log($"Creating queue item for floor {f.FloorNumber}");
             FloorQueue.Add(f.FloorNumber, f);
+        }
+    }
+
+    private Elevator.CarMoveDirection Reverse(Elevator.CarMoveDirection direction)
+    {
+        switch (direction)
+        {
+            case Elevator.CarMoveDirection.Up:
+                return Elevator.CarMoveDirection.Down;
+            case Elevator.CarMoveDirection.Down:
+                return Elevator.CarMoveDirection.Up;
+            default:
+                return Elevator.CarMoveDirection.None;
         }
     }
 }

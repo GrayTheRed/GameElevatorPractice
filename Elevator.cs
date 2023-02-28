@@ -22,8 +22,7 @@ public class Elevator : MonoBehaviour
     }
     // Start is called before the first frame update
     void Start()
-    {
-        //Queue.SetFloorQueue(ElevatorFloors);
+    {        
         SetCar();
         tempWaitTimer = CarWaitTimeSeconds;
     }
@@ -45,7 +44,6 @@ public class Elevator : MonoBehaviour
 
         if (WaitForStop)
         {
-            CarWait();
         }
         else
         {
@@ -54,6 +52,10 @@ public class Elevator : MonoBehaviour
                 int next = GetNextFloor();
                 MoveCar(next);
             }
+            else
+            {
+                Debug.Log("Queue is empty");
+            }
         }
     }
 
@@ -61,13 +63,14 @@ public class Elevator : MonoBehaviour
     {
         Debug.Log("Getting next floor");
         Vector3 nextLocation = ElevatorCar.transform.position;
-        int nextFloor = Queue.GetNextFloor(MoveDirection);
+        int nextFloor = Queue.GetNextFloor(ref MoveDirection);
 
         if(!(nextFloor == ElevatorCar.CurrentFloor))
         {
             ElevatorFloor floor = ElevatorFloors.Where(f => f.FloorNumber == nextFloor).First();
             nextFloor = floor.FloorNumber;
         }
+
         Debug.Log($"Next floor should be {nextFloor}");
         return nextFloor;
     }
@@ -87,8 +90,8 @@ public class Elevator : MonoBehaviour
         if(ElevatorCar.transform.position == nextLocation)
         {
             ElevatorCar.CurrentFloor = floorNumber;
-            WaitForStop = true;
             ElevatorCar.ElevatorDoor.Open();
+            Queue.RemoveFloorFromQueue(floorNumber);
         }
     }
 
@@ -99,15 +102,14 @@ public class Elevator : MonoBehaviour
         return floorPosition;
     }
 
-    private void CarWait()
+    public void ResumeElevator()
     {
-        tempWaitTimer -= Time.deltaTime;
-        
-        if(tempWaitTimer <= 0f)
-        {
-            tempWaitTimer = CarWaitTimeSeconds;
-            WaitForStop = false;
-        }
+        WaitForStop = false;
+    }
+
+    public void PauseElevator()
+    {
+        WaitForStop = true;
     }
 
     public void AddFloorToQueue(int floorNumber)
