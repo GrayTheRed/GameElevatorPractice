@@ -8,15 +8,12 @@ public class EventElevator : MonoBehaviour
     public EventElevatorCar Car;
     public List<EventElevatorFloor> Floors;
     public int CarFloorLocation;
-    private Dictionary<int, bool> FloorWaitStatus;
     private bool IsQueueEmpty = true;
     private bool IsCarWaiting = false;
     private CarMoveDirection MoveDirection;
 
     private void Awake()
     {
-        SetFloorWaitStatus();
-        CarFloorLocation = 2;
         SetCarStartLocation();
     }
     // Start is called before the first frame update
@@ -25,7 +22,6 @@ public class EventElevator : MonoBehaviour
         // These are for testing and will be removed later
         Floors[0].ActivateFloor();
         Floors[2].ActivateFloor();
-
     }
 
     // Update is called once per frame
@@ -39,14 +35,6 @@ public class EventElevator : MonoBehaviour
         }
     }
 
-    void SetFloorWaitStatus()
-    {
-        FloorWaitStatus = new Dictionary<int, bool>();
-        foreach (var floor in Floors)
-        {
-            FloorWaitStatus.Add(floor.FloorNumber, false);
-        }
-    }
 
     void SetCarStartLocation()
     {
@@ -83,12 +71,12 @@ public class EventElevator : MonoBehaviour
 
         if (MoveDirection == CarMoveDirection.Up)
         {
-            tempList = FloorWaitStatus.Where(k => k.Value == true && k.Key > CarFloorLocation).Select(k => k.Key).OrderBy(x => x).ToList();
+            tempList = Floors.Where(f => f.IsWaiting == true && f.FloorNumber > CarFloorLocation).Select(n => n.FloorNumber).OrderBy(i => i).ToList();
 
         }
         else if (MoveDirection == CarMoveDirection.Down)
         {
-            tempList = FloorWaitStatus.Where(k => k.Value == true && k.Key < CarFloorLocation).Select(k => k.Key).OrderByDescending(x => x).ToList();
+            tempList = Floors.Where(f => f.IsWaiting == true && f.FloorNumber < CarFloorLocation).Select(n => n.FloorNumber).OrderByDescending(i => i).ToList();
         }
 
         if(tempList.Count > 0)
@@ -99,9 +87,14 @@ public class EventElevator : MonoBehaviour
         return nextFloor;
     }
 
+    EventElevatorFloor GetFloor(int floorNumber)
+    {
+        EventElevatorFloor floor = Floors.Where(x => x.FloorNumber == floorNumber).FirstOrDefault();
+        return floor;
+    }
+
     void MoveCar(EventElevatorFloor floor)
     {
-        // should move the car closer to goal
         Vector3 nextPosition = floor.transform.position;
         if(nextPosition == Car.transform.position)
         {
@@ -124,13 +117,15 @@ public class EventElevator : MonoBehaviour
 
     bool FloorsWaiting()
     {
-        return FloorWaitStatus.ContainsValue(true);
+        int countOfWaiting = Floors.Where(i => i.IsWaiting == true).Count();
+        return countOfWaiting > 0;
     }
 
     public void AddToQueue(int floor)
     {
         Debug.Log($"Adding floor {floor} to queue");
-        FloorWaitStatus[floor] = true;
+        EventElevatorFloor eleFloor = GetFloor(floor);
+        eleFloor.IsWaiting = true;
 
         if (IsQueueEmpty)
         {
@@ -150,16 +145,13 @@ public class EventElevator : MonoBehaviour
         }
     }
 
-    IEnumerator LoadAndUnload()
-    {
-        yield return new WaitForSeconds(5);
-        IsCarWaiting = false;
-    }
 
     public void RemoveFromQueue (int floor)
     {
         Debug.Log($"Removing floor {floor} from queue");
-        FloorWaitStatus[floor] = false;
+        EventElevatorFloor eleFloor = GetFloor(floor);
+        eleFloor.IsWaiting = false;
+
         IsQueueEmpty = !(FloorsWaiting());
 
         if (IsQueueEmpty)
@@ -167,6 +159,12 @@ public class EventElevator : MonoBehaviour
             Debug.Log("no more items in queue");
             MoveDirection = CarMoveDirection.Stationary;
         }
+    }
+
+    IEnumerator LoadAndUnload()
+    {
+        yield return new WaitForSeconds(5);
+        IsCarWaiting = false;
     }
 
     public enum CarMoveDirection
