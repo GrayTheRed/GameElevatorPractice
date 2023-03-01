@@ -14,6 +14,7 @@ public class EventElevatorFloor : MonoBehaviour
     public FloorEvent FloorActivateEvent;
     public FloorEvent FloorDeactivateEvent;
     public int FloorNumber;
+    public bool IsWaiting;
     // Start is called before the first frame update
     void Start()
     {
