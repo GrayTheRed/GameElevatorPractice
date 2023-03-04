@@ -11,14 +11,21 @@ public class FloorEvent : UnityEvent<int>
 
 public class EventElevatorFloor : MonoBehaviour
 {
-    public FloorEvent FloorActivateEvent;
-    public FloorEvent FloorDeactivateEvent;
+    public EventElevator Elevator;    
     public int FloorNumber;
     public bool IsWaiting;
+    [HideInInspector] public FloorEvent FloorActivateEvent;
+    [HideInInspector] public FloorEvent FloorDeactivateEvent;
+
+    private void Awake()
+    {
+        FloorActivateEvent.AddListener(Elevator.AddToQueue);
+        FloorDeactivateEvent.AddListener(Elevator.RemoveFromQueue);
+    }
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame

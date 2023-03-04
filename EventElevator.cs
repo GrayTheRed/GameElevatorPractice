@@ -20,9 +20,7 @@ public class EventElevator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // These are for testing and will be removed later
-        Floors[0].ActivateFloor();
-        Floors[2].ActivateFloor();
+
     }
 
     // Update is called once per frame
@@ -30,7 +28,6 @@ public class EventElevator : MonoBehaviour
     {
         if(!IsQueueEmpty && !IsCarWaiting)
         {
-            Debug.Log("There are floors waiting and we should be moving");
             MoveCar(NextFloor);
         }
     }
@@ -98,7 +95,6 @@ public class EventElevator : MonoBehaviour
         Vector3 nextPosition = floor.transform.position;
         if(nextPosition == Car.transform.position)
         {
-            Debug.Log("Arrived");
             CarArrival(floor);
         }
         else
@@ -109,6 +105,7 @@ public class EventElevator : MonoBehaviour
 
     void CarArrival(EventElevatorFloor floor)
     {
+        Debug.Log($"Car has arrived on floor {floor.FloorNumber}");
         IsCarWaiting = true;
         floor.DeactivateFloor();
         CarFloorLocation = floor.FloorNumber;
@@ -158,7 +155,7 @@ public class EventElevator : MonoBehaviour
 
         if (IsQueueEmpty)
         {
-            Debug.Log("no more items in queue");
+            Debug.Log("Queue is empty");
             MoveDirection = CarMoveDirection.Stationary;
             NextFloor = null;
         }
@@ -170,7 +167,7 @@ public class EventElevator : MonoBehaviour
         IsCarWaiting = false;
     }
 
-    public enum CarMoveDirection
+    private enum CarMoveDirection
     {
         Up,
         Down,
