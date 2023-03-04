@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class EventElevator : MonoBehaviour
 {
-    public EventElevatorCar Car;
-    public List<EventElevatorFloor> Floors;
-    public int CarFloorLocation;
+    [SerializeField] private EventElevatorCar Car;
+    [SerializeField] private List<EventElevatorFloor> Floors;
+    [SerializeField] private int CarFloorLocation;
     private bool IsQueueEmpty = true;
     private bool IsCarWaiting = false;
     private CarMoveDirection MoveDirection;
+    private EventElevatorFloor NextFloor;
 
     private void Awake()
     {
@@ -30,8 +31,7 @@ public class EventElevator : MonoBehaviour
         if(!IsQueueEmpty && !IsCarWaiting)
         {
             Debug.Log("There are floors waiting and we should be moving");
-            EventElevatorFloor nextFloor = GetNextFloor();
-            MoveCar(nextFloor);
+            MoveCar(NextFloor);
         }
     }
 
@@ -41,17 +41,17 @@ public class EventElevator : MonoBehaviour
        Car.transform.position = Floors.Where(i => i.FloorNumber == CarFloorLocation).Select(k => k.transform.position).First();
     }
 
-    EventElevatorFloor GetNextFloor()
+    void SetNextFloor()
     {
-        int? nextFloor = NextFloor();
-        if(nextFloor == null)
+        int? nextFloor = NextFloorNumber();
+        if (nextFloor == null)
         {
             ChangeCarDirection();
-            nextFloor = NextFloor();
+            nextFloor = NextFloorNumber();
         }
-        return Floors.Where(i => i.FloorNumber == nextFloor).FirstOrDefault();
+        NextFloor = Floors.Where(i => i.FloorNumber == nextFloor).FirstOrDefault();
     }
-
+    
     void ChangeCarDirection()
     {
         if (MoveDirection == CarMoveDirection.Up)
@@ -64,7 +64,7 @@ public class EventElevator : MonoBehaviour
         }
     }
 
-    int? NextFloor()
+    int? NextFloorNumber()
     {
         int? nextFloor = null;
         List<int> tempList = new List<int>();
@@ -113,6 +113,7 @@ public class EventElevator : MonoBehaviour
         floor.DeactivateFloor();
         CarFloorLocation = floor.FloorNumber;
         StartCoroutine(LoadAndUnload());
+        SetNextFloor();
     }
 
     bool FloorsWaiting()
@@ -126,6 +127,7 @@ public class EventElevator : MonoBehaviour
         Debug.Log($"Adding floor {floor} to queue");
         EventElevatorFloor eleFloor = GetFloor(floor);
         eleFloor.IsWaiting = true;
+        SetNextFloor();
 
         if (IsQueueEmpty)
         {
@@ -158,6 +160,7 @@ public class EventElevator : MonoBehaviour
         {
             Debug.Log("no more items in queue");
             MoveDirection = CarMoveDirection.Stationary;
+            NextFloor = null;
         }
     }
 
