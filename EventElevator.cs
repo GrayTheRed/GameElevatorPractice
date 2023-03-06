@@ -20,7 +20,8 @@ public class EventElevator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Floors[0].ActivateFloor();
+        Floors[2].ActivateFloor();
     }
 
     // Update is called once per frame
@@ -109,6 +110,7 @@ public class EventElevator : MonoBehaviour
         IsCarWaiting = true;
         floor.DeactivateFloor();
         CarFloorLocation = floor.FloorNumber;
+        Car.Door.OpenDoors();
         StartCoroutine(LoadAndUnload());
         SetNextFloor();
     }

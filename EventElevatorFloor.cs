@@ -11,7 +11,7 @@ public class FloorEvent : UnityEvent<int>
 
 public class EventElevatorFloor : MonoBehaviour
 {
-    public EventElevator Elevator;    
+    public EventElevator Elevator;
     public int FloorNumber;
     public bool IsWaiting;
     [HideInInspector] public FloorEvent FloorActivateEvent;

@@ -1,16 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class EventElevatorCar : MonoBehaviour
+public class EventElevatorDoor : MonoBehaviour
 {
-    public EventElevatorDoor Door;
-
     // Start is called before the first frame update
+    public Animator anim;
     void Start()
     {
-        
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -19,4 +17,9 @@ public class EventElevatorCar : MonoBehaviour
         
     }
 
+    public void OpenDoors()
+    {
+        Debug.Log("OpenDoors triggered");
+        anim.SetTrigger("OpenDoors");
+    }
 }
